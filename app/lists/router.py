@@ -28,7 +28,13 @@ async def get_many(
     message = (
         event.message if isinstance(event, types.CallbackQuery) else event
     )
-    response = await todo_lists.get_many(user, LimitOffset(limit=100))
+    user_data = await state.get_data()
+    workspace_id = user_data["workspace_id"]
+    assert workspace_id is not None
+
+    response = await todo_lists.get_many(
+        user, workspace_id, LimitOffset(limit=100)
+    )
     kb = get_todo_list_kb(response)
     if response.total > 0:
         await message.answer(

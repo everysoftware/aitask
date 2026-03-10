@@ -14,10 +14,16 @@ class TodoListUseCases(UseCase):
         self.uow = uow
 
     async def get_many(
-        self, user: User, pagination: Pagination, **kwargs: Any
+        self,
+        user: User,
+        workspace_id: UUID,
+        pagination: Pagination,
+        **kwargs: Any,
     ) -> Page[TodoList]:
         return await self.uow.todo_lists.get_many(
-            UserTodoListSpecification(user.id), pagination, **kwargs
+            UserTodoListSpecification(user.id, workspace_id),
+            pagination,
+            **kwargs,
         )
 
     async def create(self, **kwargs: Any) -> TodoList:
