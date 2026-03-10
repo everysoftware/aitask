@@ -149,7 +149,7 @@ async def add(
         workspace_id=user_data["workspace_id"],
         name=user_data["todo_list_name"],
         description=user_data["todo_list_description"],
-        stack=tags,
+        tags=tags,
     )
     await message.answer("Список успешно создан!")
     await get_many(message, state, user, todo_lists)
