@@ -16,7 +16,7 @@ from app.workspaces.keyboards import get_workspace_kb
 router = Router()
 
 
-@router.message(F.text == "Списки 📝")
+@router.message(F.text == "Управление списками 📝")
 @router.message(Command("lists"))
 @router.callback_query(F.data == "to_todo_lists")
 async def get_many(
@@ -38,7 +38,11 @@ async def get_many(
     kb = get_todo_list_kb(response)
     if response.total > 0:
         await message.answer(
-            "Выберите список задач, чтобы переключиться", reply_markup=kb
+            "Выберите список задач, который вы хотите посмотреть или создайте новый.\n\n"
+            "_Списки задач позволяют хранить набор задач, которые нужно выполнить. "
+            "Например, вы можете создать отдельный список по фильмам, которые хотите посмотреть, "
+            "отдельный - по заданиям по учебе, и еще один по хобби._",
+            reply_markup=kb,
         )
     else:
         await message.answer("Нет списков задач", reply_markup=kb)

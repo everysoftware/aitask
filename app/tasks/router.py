@@ -85,7 +85,7 @@ async def get(
     todo_list = await todo_list_service.get_one(todo_list_id)
 
     await message.answer(
-        f"📌 *{task.name}*\n\n"
+        f"✅ *{task.name}*\n\n"
         f"Список: {todo_list.name}\n"
         f"Статус: {TASK_STATUSES[task.status]["text"]} {TASK_STATUSES[task.status]["emoji"]}\n"
         f"Описание: {desc}\n"

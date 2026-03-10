@@ -27,13 +27,25 @@ EDIT_TEST_STATUS_KB = get_status_kb(TEST_STATUSES, cb_prefix="set_test_status")
 SHOW_TASK_KB = InlineKeyboardMarkup(
     inline_keyboard=[
         [
-            InlineKeyboardButton(text="✏️", callback_data="edit_status"),
-            InlineKeyboardButton(text="💬", callback_data="comment"),
-            InlineKeyboardButton(text="🔗", callback_data="report"),
+            InlineKeyboardButton(
+                text="Изменить статус 🟢", callback_data="edit_status"
+            ),
         ],
         [
-            InlineKeyboardButton(text="✨", callback_data="complete"),
-            InlineKeyboardButton(text="❌", callback_data="delete"),
+            InlineKeyboardButton(
+                text="Изменить описание 💬", callback_data="comment"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="Изменить вложения 🔗", callback_data="report"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="ИИ-анализ ✨", callback_data="complete"
+            ),
+            InlineKeyboardButton(text="Удалить ❌", callback_data="delete"),
         ],
         [InlineKeyboardButton(text="Назад ⬅️", callback_data="to_todo_list")],
     ]

@@ -15,7 +15,7 @@ router = Router()
 
 @router.callback_query(F.data == "to_workspaces")
 @router.message(Command("workspaces"))
-@router.message(F.text == "Сменить пространство 📦")
+@router.message(F.text == "Управление пространствами 📦")
 async def get_many(
     event: types.Message | types.CallbackQuery,
     state: FSMContext,
@@ -29,7 +29,12 @@ async def get_many(
     kb = get_workspace_kb(response)
     if response.total > 0:
         await message.answer(
-            "Выберите пространство, чтобы переключиться", reply_markup=kb
+            "Выберите пространство, задачи которого хотите видеть или создайте новое.\n\n"
+            "_Пространства позволяют разделять списки задач для разных целей. "
+            "Например, у вас может быть пару списков по учебе, которые вы хотите хранить отдельно от списков с фильмами, "
+            "спортом или хобби. "
+            "В таком случае вы можете вынести их в отдельное пространство, и они не будут смешиваться со всем остальным._",
+            reply_markup=kb,
         )
     else:
         await message.answer("Нет пространств", reply_markup=kb)
@@ -87,7 +92,7 @@ async def get(
     workspace_id = UUID(call.data.split("_")[1])
     workspace = await workspaces.get_one(workspace_id)
     await call.message.answer(
-        f"Вы переключились на пространство: *{workspace.name}*\n\n"
+        f"Вы переключились на пространство: *{workspace.name}*. Теперь вы будете видеть списки этого пространства.\n\n"
         f"Описание: {workspace.description}\n"
         f"Создано: {workspace.created_at}\n"
         f"Обновлено: {workspace.updated_at}",
