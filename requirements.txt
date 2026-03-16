@@ -1,7 +1,7 @@
-aiogram==3.13.1
+aiogram==3.26.0
 alembic==1.13.3
 asyncpg==0.29.0
-fast-depends==2.4.11
+fast-depends==3.0.8
 mypy==1.11.2
 numpy==2.0.2
 pandas==2.2.3
