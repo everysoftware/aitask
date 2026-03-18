@@ -1,18 +1,19 @@
 import logging
 
-from aiogram import Router, F, types
+from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
-from app.base.types import UUID as ID, UUID
+from app.base.types import UUID
+from app.base.types import UUID as ID
 from app.bot import bot
 from app.lists import router as todo_lists_router
 from app.lists.dependencies import TodoListServiceDep
 from app.tasks.constants import TASK_STATUSES
 from app.tasks.dependencies import TaskServiceDep
 from app.tasks.keyboards import (
-    SHOW_TASK_KB,
     EDIT_TASK_STATUS_KB,
     EDIT_TEST_STATUS_KB,
+    SHOW_TASK_KB,
 )
 from app.tasks.schemas import TaskStatus, TestStatus
 from app.tasks.states import TaskGroup
@@ -25,9 +26,7 @@ router = Router()
 # CREATE
 @router.callback_query(F.data == "add", TaskGroup.get_many)
 async def get_name(call: types.CallbackQuery, state: FSMContext) -> None:
-    await call.message.answer(
-        "Назовите задачу. Например, `составить конспект по Римской империи`"
-    )
+    await call.message.answer("Назовите задачу. Например, `составить конспект по Римской империи`")
     await state.set_state(TaskGroup.enter_name)
     await call.answer()
 
@@ -52,9 +51,7 @@ async def create(
     )
     await message.answer("Задача успешно создана!")
 
-    await todo_lists_router.get(
-        message, state, service, todo_list_service, todo_list_id=todo_list_id
-    )
+    await todo_lists_router.get(message, state, service, todo_list_service, todo_list_id=todo_list_id)
 
 
 # GET
@@ -126,16 +123,12 @@ async def edit_report(
 # EDIT STATUS
 @router.callback_query(F.data == "edit_status", TaskGroup.get)
 async def enter_status(call: types.CallbackQuery, state: FSMContext) -> None:
-    await call.message.answer(
-        "Выберите новый статус задачи", reply_markup=EDIT_TASK_STATUS_KB
-    )
+    await call.message.answer("Выберите новый статус задачи", reply_markup=EDIT_TASK_STATUS_KB)
     await state.set_state(TaskGroup.enter_status)
     await call.answer()
 
 
-@router.callback_query(
-    F.data.startswith("set_status:"), TaskGroup.enter_status
-)
+@router.callback_query(F.data.startswith("set_status:"), TaskGroup.enter_status)
 async def edit_status(
     call: types.CallbackQuery,
     state: FSMContext,
@@ -153,19 +146,13 @@ async def edit_status(
 
 # EDIT TEST STATUS
 @router.callback_query(F.data == "edit_test_status", TaskGroup.get)
-async def enter_test_status(
-    call: types.CallbackQuery, state: FSMContext
-) -> None:
-    await call.message.answer(
-        "Выберите новый статус теста", reply_markup=EDIT_TEST_STATUS_KB
-    )
+async def enter_test_status(call: types.CallbackQuery, state: FSMContext) -> None:
+    await call.message.answer("Выберите новый статус теста", reply_markup=EDIT_TEST_STATUS_KB)
     await state.set_state(TaskGroup.enter_status)
     await call.answer()
 
 
-@router.callback_query(
-    F.data.startswith("set_test_status:"), TaskGroup.enter_status
-)
+@router.callback_query(F.data.startswith("set_test_status:"), TaskGroup.enter_status)
 async def edit_test_status(
     call: types.CallbackQuery,
     state: FSMContext,
@@ -176,9 +163,7 @@ async def edit_test_status(
     user_data = await state.get_data()
     task_id = user_data["task_id"]
     if test_status != TestStatus.no_status:
-        await service.update(
-            task_id, status=TaskStatus.done, test_status=test_status
-        )
+        await service.update(task_id, status=TaskStatus.done, test_status=test_status)
     else:
         await service.update(task_id, test_status=test_status)
     await call.message.answer("Статус теста успешно изменен!")
@@ -239,6 +224,4 @@ async def delete(
     task_id = user_data["task_id"]
     await service.delete(task_id)
     await call.message.answer("Задача успешно удалена!")
-    await todo_lists_router.get(
-        call.message, state, service, todo_list_service
-    )
+    await todo_lists_router.get(call.message, state, service, todo_list_service)

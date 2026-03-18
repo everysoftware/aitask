@@ -22,6 +22,4 @@ class StatsUseCases(UseCase):
         to_dt: datetime.datetime,
     ) -> str:
         stats = await self.uow.tasks.get_task_stats(user_id, from_dt, to_dt)
-        return paint_heat_map(
-            stats, title="Выполненных задач за последний год: {count}"
-        )
+        return paint_heat_map(stats, title="Выполненных задач за последний год: {count}")

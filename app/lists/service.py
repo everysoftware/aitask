@@ -1,6 +1,6 @@
 from typing import Any
 
-from app.base.pagination import Pagination, Page
+from app.base.pagination import Page, Pagination
 from app.base.types import UUID
 from app.base.use_case import UseCase
 from app.db.dependencies import UOWDep

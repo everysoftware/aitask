@@ -1,7 +1,7 @@
 from typing import Any
 
 from app.ai.dependencies import AIDep
-from app.base.pagination import Pagination, Page
+from app.base.pagination import Page, Pagination
 from app.base.types import UUID
 from app.base.use_case import UseCase
 from app.db.dependencies import UOWDep
@@ -14,12 +14,8 @@ class TaskUseCases(UseCase):
         self.uow = uow
         self.ai = ai
 
-    async def get_many(
-        self, todo_list_id: UUID, pagination: Pagination
-    ) -> Page[Task]:
-        return await self.uow.tasks.get_many(
-            TodoListTaskSpecification(todo_list_id), pagination
-        )
+    async def get_many(self, todo_list_id: UUID, pagination: Pagination) -> Page[Task]:
+        return await self.uow.tasks.get_many(TodoListTaskSpecification(todo_list_id), pagination)
 
     async def create(self, **kwargs: Any) -> Task:
         task = Task(**kwargs)

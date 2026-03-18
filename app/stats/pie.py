@@ -1,22 +1,20 @@
 import uuid
 from typing import Any
 
-import matplotlib.patches as patches
 import matplotlib.pyplot as plt
+from matplotlib import patches
 
 from app.stats.config import stats_settings
 from app.tasks.constants import TEST_STATUSES
 
 
-def paint_pie_plot(
-    stats: dict[Any, int], *, title: str = "Total tasks: {count}"
-) -> str:
+def paint_pie_plot(stats: dict[Any, int], *, title: str = "Total tasks: {count}") -> str:
     # Разделяем классы и их количество для построения графика
-    class_names = [TEST_STATUSES[status]["text"] for status in stats.keys()]
+    class_names = [TEST_STATUSES[status]["text"] for status in stats]
     class_values = list(stats.values())
 
     # Получаем цвета
-    colors = [TEST_STATUSES[status]["color"] for status in stats.keys()]
+    colors = [TEST_STATUSES[status]["color"] for status in stats]
 
     # Строим круговую диаграмму
     plt.figure()

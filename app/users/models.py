@@ -4,13 +4,13 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import Boolean
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import mapped_column, Mapped, relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.base.models import Entity
 
 if TYPE_CHECKING:
-    from app.tasks.models import Task
     from app.lists.models import TodoList
+    from app.tasks.models import Task
     from app.workspaces.models import Workspace
 
 

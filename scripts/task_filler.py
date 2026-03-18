@@ -2,12 +2,13 @@ import asyncio
 import datetime
 import logging
 import random
-from typing import Sequence, Any
+from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
 import pandas as pd
 from sqlalchemy import insert
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.base.types import UUID, naive_utc
 from app.lists.models import TodoList
@@ -20,9 +21,7 @@ from app.workspaces.models import Workspace
 def generate_timestamps(number: int) -> Sequence[datetime.datetime]:
     now = naive_utc()
     timestamps = np.random.choice(
-        pd.date_range(
-            start=now - datetime.timedelta(days=365 - 30), end=now, freq="D"
-        ),
+        pd.date_range(start=now - datetime.timedelta(days=365 - 30), end=now, freq="D"),
         number,
     )
     logging.info("Generated %d timestamps", number)
@@ -54,9 +53,7 @@ def generate_statuses(
 
 def get_df(number: int, **static: Any) -> pd.DataFrame:
     timestamps = generate_timestamps(number)
-    statuses, test_statuses = generate_statuses(
-        number, done_p=0.9, test_p=0.8, passed_p=0.6
-    )
+    statuses, test_statuses = generate_statuses(number, done_p=0.9, test_p=0.8, passed_p=0.6)
     df = pd.DataFrame(
         {
             "name": "Test",
@@ -81,7 +78,7 @@ async def fill_tasks_table(db_url: str, user_id: UUID, number: int) -> None:
     session_factory = async_sessionmaker(engine, expire_on_commit=False)
     async with session_factory() as session:
         async with session.begin():
-            user: User = await session.get_one(User, user_id)  # noqa
+            user: User = await session.get_one(User, user_id)
             ws = Workspace(name="Test workspace", user=user)
             project = TodoList(name="Test list", user=user, workspace=ws)
             session.add_all((ws, project))
@@ -107,12 +104,8 @@ def get_valid_integer(prompt: str) -> int:
 
 async def main() -> None:
     logging.basicConfig(level=logging.INFO)
-    db_url = input(
-        "Enter DB url (e.g. postgresql+asyncpg://postgres:changethis@db:5432/app): "
-    )
-    user_id = input(
-        "Enter user ID (e.g. 3a2ec830-c4d5-465a-8a22-09bb302b58fa): "
-    )
+    db_url = input("Enter DB url (e.g. postgresql+asyncpg://postgres:changethis@db:5432/app): ")
+    user_id = input("Enter user ID (e.g. 3a2ec830-c4d5-465a-8a22-09bb302b58fa): ")
     number = get_valid_integer("Enter number of tasks (e.g. 1000): ")
     await fill_tasks_table(db_url, user_id, number)  # type: ignore[call-arg]
     print("Done!")

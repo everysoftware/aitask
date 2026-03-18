@@ -13,7 +13,7 @@ recognizer.vosk_model = Model(voice_settings.recognition_model)
 def ogg_to_wav(ogg_path: str, wav_path: str | None = None) -> str:
     if wav_path is None:
         wav_path = ogg_path.replace(".ogg", ".wav")
-    subprocess.run(["ffmpeg", "-i", ogg_path, wav_path], check=True)
+    subprocess.run(["ffmpeg", "-i", ogg_path, wav_path], check=True)  # noqa: S603, S607
     return wav_path
 
 
@@ -21,5 +21,4 @@ def stt(wav_path: str) -> str:
     with sr.AudioFile(wav_path) as source:
         audio_data = recognizer.record(source)
         text_json = recognizer.recognize_vosk(audio_data, language="russian")
-        text = json.loads(text_json)["text"]
-        return text  # type: ignore[no-any-return]
+        return json.loads(text_json)["text"]  # type: ignore[no-any-return]

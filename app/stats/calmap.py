@@ -5,13 +5,13 @@ import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
-from matplotlib.colors import ListedColormap, ColorConverter
+from matplotlib.colors import ColorConverter, ListedColormap
 from matplotlib.patches import Polygon
-from pandas import Series, DatetimeIndex
+from pandas import DatetimeIndex, Series
 
 
-def yearplot(
-    data: Series,  # type: ignore[type-arg]
+def yearplot(  # noqa: PLR0913, PLR0915
+    data: Series,
     *,
     how: str | None = "sum",
     vmin: float | None = 0,
@@ -37,17 +37,12 @@ def yearplot(
     else:
         start_date = pd.Timestamp(f"{end_date.year}-01-01")
 
-    by_day = (
-        data.resample("D")
-        .agg(how)
-        .reindex(pd.date_range(start=start_date, end=end_date, freq="D"))
-        .fillna(0)
-    )
+    by_day = data.resample("D").agg(how).reindex(pd.date_range(start=start_date, end=end_date, freq="D")).fillna(0)
 
     if vmin is None:
-        vmin = by_day.min()  # type: ignore[assignment]
+        vmin = by_day.min()
     if vmax is None:
-        vmax = by_day.max()  # type: ignore[assignment]
+        vmax = by_day.max()
     if ax is None:
         ax = plt.gca()
     if linecolor is None:
@@ -59,7 +54,7 @@ def yearplot(
         months = dict(enumerate(calendar.month_abbr, start=1))
     if days is None:
         days = dict(enumerate(calendar.day_abbr, start=1))
-    index: DatetimeIndex = by_day.index  # type: ignore[assignment]
+    index: DatetimeIndex = by_day.index
     by_day = pd.DataFrame(
         {
             "data": by_day,
@@ -69,12 +64,8 @@ def yearplot(
         }
     )
 
-    plot_data = by_day.pivot(
-        index="day", columns="week", values="data"
-    ).values[::-1]
-    fill_data = by_day.pivot(
-        index="day", columns="week", values="fill"
-    ).values[::-1]
+    plot_data = by_day.pivot_table(index="day", columns="week", values="data").to_numpy()[::-1]
+    fill_data = by_day.pivot_table(index="day", columns="week", values="fill").to_numpy()[::-1]
 
     plot_data = np.ma.masked_where(np.isnan(plot_data), plot_data)  # type: ignore[no-untyped-call]
     fill_data = np.ma.masked_where(np.isnan(fill_data), fill_data)  # type: ignore[no-untyped-call]
@@ -89,9 +80,7 @@ def yearplot(
     ax.yaxis.set_tick_params(which="both", length=0)
 
     xticks = {}
-    months_in_order = list(range(start_date.month, 13)) + list(
-        range(1, end_date.month + 1)
-    )
+    months_in_order = list(range(start_date.month, 13)) + list(range(1, end_date.month + 1))
     for month in months_in_order:
         group = by_day[index.month == month]
         first = group.index.min()
@@ -117,7 +106,7 @@ def yearplot(
 
     ax.set_xticks(list(xticks.values()))
     ax.set_xticklabels(xticks.keys())
-    ax.set_yticks([6 - i + 0.5 for i in days.keys()])
+    ax.set_yticks([6 - i + 0.5 for i in days])
     ax.set_yticklabels(days.values(), rotation="horizontal", va="center")
 
     return ax

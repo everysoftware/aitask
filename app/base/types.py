@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import datetime
-from uuid import UUID as PythonUUID, uuid4
+from uuid import UUID as PythonUUID  # noqa: N811
+from uuid import uuid4
 
 UUID = PythonUUID
 

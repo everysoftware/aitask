@@ -1,7 +1,7 @@
 import logging
 import os
 
-from aiogram import Router, types, F
+from aiogram import F, Router, types
 from aiogram.fsm.context import FSMContext
 
 from app.bot import bot
@@ -17,7 +17,7 @@ router = Router()
 
 
 @router.message(F.content_type == types.ContentType.VOICE)
-async def handle_voice_message(
+async def handle_voice_message(  # noqa: PLR0913
     message: types.Message,
     user: UserDep,
     service: VoiceServiceDep,
@@ -32,9 +32,7 @@ async def handle_voice_message(
             assert file.file_path is not None
             await bot.download_file(file.file_path, ogg_path)
         except Exception as e:
-            await message.reply(
-                "Произошла ошибка при скачивании голосового сообщения"
-            )
+            await message.reply("Произошла ошибка при скачивании голосового сообщения")
             logging.info("Error: %s", e)
             raise
         response = await service.help(user, state, ogg_path)

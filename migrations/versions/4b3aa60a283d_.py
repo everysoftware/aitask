@@ -6,17 +6,16 @@ Create Date: 2025-02-26 18:04:44.185175
 
 """
 
-from typing import Sequence, Union
+from collections.abc import Sequence
 
-from alembic import op
 import sqlalchemy as sa
-
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = "4b3aa60a283d"
-down_revision: Union[str, None] = None
-branch_labels: Union[str, Sequence[str], None] = None
-depends_on: Union[str, Sequence[str], None] = None
+down_revision: str | None = None
+branch_labels: str | Sequence[str] | None = None
+depends_on: str | Sequence[str] | None = None
 
 
 def upgrade() -> None:
@@ -33,9 +32,7 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(), nullable=False),
         sa.PrimaryKeyConstraint("id", name=op.f("users_pkey")),
     )
-    op.create_index(
-        op.f("users_telegram_id_idx"), "users", ["telegram_id"], unique=False
-    )
+    op.create_index(op.f("users_telegram_id_idx"), "users", ["telegram_id"], unique=False)
     op.create_table(
         "workspaces",
         sa.Column("id", sa.Uuid(), nullable=False),

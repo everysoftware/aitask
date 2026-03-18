@@ -6,10 +6,10 @@ from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.base.models import Entity
-from app.base.types import UUID
-from app.tasks.models import Task
+from app.base.types import UUID  # noqa: TCH001
 
 if TYPE_CHECKING:
+    from app.tasks.models import Task
     from app.users.models import User
     from app.workspaces.models import Workspace
 
@@ -17,12 +17,8 @@ if TYPE_CHECKING:
 class TodoList(Entity):
     __tablename__ = "todo_lists"
 
-    user_id: Mapped[UUID] = mapped_column(
-        ForeignKey("users.id", ondelete="cascade")
-    )
-    workspace_id: Mapped[UUID] = mapped_column(
-        ForeignKey("workspaces.id", ondelete="cascade")
-    )
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id", ondelete="cascade"))
+    workspace_id: Mapped[UUID] = mapped_column(ForeignKey("workspaces.id", ondelete="cascade"))
     name: Mapped[str]
     description: Mapped[str] = mapped_column(default="")
     tags: Mapped[str] = mapped_column(default="")

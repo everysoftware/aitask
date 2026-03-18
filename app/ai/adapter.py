@@ -1,14 +1,14 @@
 import uuid
-from typing import Any
+from types import TracebackType
 
 import aiohttp
 from aiohttp import BasicAuth
 
+from app.ai.exceptions import AIError
+
 
 class AIAdapter:
-    def __init__(
-        self, gigachat_client_id: str, gigachat_client_secret: str
-    ) -> None:
+    def __init__(self, gigachat_client_id: str, gigachat_client_secret: str) -> None:
         self.gigachat_client_id = gigachat_client_id
         self.gigachat_client_secret = gigachat_client_secret
         self._token: str | None = None
@@ -17,13 +17,15 @@ class AIAdapter:
     @property
     def token(self) -> str:
         if self._token is None:
-            raise Exception("Unauthorized")
+            msg = "Unauthorized"
+            raise AIError(msg)
         return self._token
 
     @property
     def client(self) -> aiohttp.ClientSession:
         if self._client is None:
-            raise Exception("Please use async context manager")
+            msg = "Please use async context manager"
+            raise AIError(msg)
         return self._client
 
     async def authorize(self) -> str:
@@ -35,9 +37,7 @@ class AIAdapter:
         }
         payload = {"scope": "GIGACHAT_API_PERS"}
         auth = BasicAuth(self.gigachat_client_id, self.gigachat_client_secret)
-        async with self.client.post(
-            url=url, headers=headers, auth=auth, data=payload, ssl=False
-        ) as response:
+        async with self.client.post(url=url, headers=headers, auth=auth, data=payload, ssl=False) as response:
             token = await response.json()
             at = token["access_token"]
             self._token = at
@@ -55,12 +55,9 @@ class AIAdapter:
             "Authorization": f"Bearer {self.token}",
         }
         url = "https://gigachat.devices.sberbank.ru/api/v1/chat/completions"
-        async with self.client.post(
-            url=url, headers=headers, json=payload, ssl=False
-        ) as response:
+        async with self.client.post(url=url, headers=headers, json=payload, ssl=False) as response:
             data = await response.json()
-            answer = data["choices"][0]["message"]["content"]
-            return answer  # type: ignore[no-any-return]
+            return data["choices"][0]["message"]["content"]  # type: ignore[no-any-return]
 
     async def __aenter__(self) -> None:
         self._client = aiohttp.ClientSession()
@@ -68,7 +65,7 @@ class AIAdapter:
         await self.authorize()
 
     async def __aexit__(
-        self, exc_type: Any, exc_val: Any, exc_tb: Any
+        self, exc_type: type[BaseException] | None, exc_val: BaseException | None, exc_tb: TracebackType | None
     ) -> None:
         await self._client.__aexit__(exc_type, exc_val, exc_tb)
         self._client = None

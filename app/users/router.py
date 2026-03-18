@@ -1,5 +1,5 @@
-from aiogram import Router, types, F
-from aiogram.filters import CommandStart, Command
+from aiogram import F, Router, types
+from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
 
 from app.commands import BOT_COMMANDS_STR, HELP_STR
@@ -11,9 +11,7 @@ router = Router()
 
 
 @router.message(CommandStart())
-async def start_command(
-    message: types.Message, state: FSMContext, users: UserServiceDep
-) -> None:
+async def start_command(message: types.Message, state: FSMContext, users: UserServiceDep) -> None:
     assert message.from_user is not None
     user = await users.get_by_telegram_id(message.from_user.id)
     if not user:
@@ -24,7 +22,7 @@ async def start_command(
         )
         user = await users.register(state, data)
     await message.answer(
-        f"Добро пожаловать, {user.display_name}! 😊",
+        f'{user.display_name}, добро пожаловать в первый таск-трекер с *ИИ* в *Telegram*! 👋\n\nОтправь мне голосовое сообщение: "Добавь задачу купить молоко" и я запишу ее в список. Для просмотра задач скажи: "Покажи задачи" 🎙️\n\nДля навигации используй меню ниже или команды. Узнай больше о боте в разделе "Помощь" ☺️',
         reply_markup=MAIN_MENU_KB,
     )
 

@@ -7,9 +7,7 @@ from matplotlib import pyplot as plt
 from app.stats.calmap import yearplot
 
 
-def paint_heat_map(
-    stats: dict[datetime.datetime, int], *, title: str = "Total done: {count}"
-) -> str:
+def paint_heat_map(stats: dict[datetime.datetime, int], *, title: str = "Total done: {count}") -> str:
     data = pd.Series(stats)
     data.index = pd.to_datetime(data.index)
     plt.figure(figsize=(7, 3))

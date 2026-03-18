@@ -1,20 +1,21 @@
 from __future__ import annotations
-from __future__ import annotations
 
 import abc
 from abc import ABC
-from typing import Self, Any
-from typing import cast
-
-from sqlalchemy.ext.asyncio import (
-    AsyncSession,
-    async_sessionmaker,
-)
+from typing import TYPE_CHECKING, Self, cast
 
 from app.lists.repositories import TodoListRepository
 from app.tasks.repositories import TaskRepository
 from app.users.repositories import UserRepository
 from app.workspaces.repositories import WorkspaceRepository
+
+if TYPE_CHECKING:
+    from types import TracebackType
+
+    from sqlalchemy.ext.asyncio import (
+        AsyncSession,
+        async_sessionmaker,
+    )
 
 
 class IUnitOfWork(ABC):
@@ -44,7 +45,7 @@ class IUnitOfWork(ABC):
         return self
 
     async def __aexit__(
-        self, exc_type: Any, exc_value: Any, traceback: Any
+        self, exc_type: type[BaseException] | None, exc_value: BaseException | None, traceback: TracebackType | None
     ) -> None:
         if exc_type is not None:
             await self.rollback()
@@ -57,9 +58,7 @@ class SQLAlchemyUOW(IUnitOfWork):
     _session_factory: async_sessionmaker[AsyncSession]
     _session: AsyncSession
 
-    def __init__(
-        self, session_factory: async_sessionmaker[AsyncSession]
-    ) -> None:
+    def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
         self._session_factory = session_factory
 
     async def begin(self) -> None:

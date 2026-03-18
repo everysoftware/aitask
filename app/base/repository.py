@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 from app.base.models import Entity
-from app.base.pagination import Pagination, LimitOffset, Page
+from app.base.pagination import LimitOffset, Page, Pagination
 from app.base.sorting import Sorting
 from app.base.specification import ISpecification
 from app.base.types import UUID
@@ -15,10 +15,10 @@ class IRepository(ABC, Generic[T]):
     async def add(self, model: T) -> T: ...
 
     @abstractmethod
-    async def get(self, id: UUID) -> T | None: ...
+    async def get(self, identity: UUID) -> T | None: ...
 
     @abstractmethod
-    async def get_one(self, id: UUID) -> T: ...
+    async def get_one(self, identity: UUID) -> T: ...
 
     @abstractmethod
     async def find(self, criteria: ISpecification) -> T | None: ...

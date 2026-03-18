@@ -1,4 +1,5 @@
-from typing import Annotated, AsyncIterator
+from collections.abc import AsyncIterator
+from typing import Annotated
 
 from fast_depends import Depends
 

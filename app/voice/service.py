@@ -8,8 +8,8 @@ from app.base.use_case import UseCase
 from app.db.dependencies import UOWDep
 from app.tasks.models import Task
 from app.users.models import User
-from app.voice.adapter import stt, ogg_to_wav
-from app.voice.schemas import VoiceResponse, VoiceCommand
+from app.voice.adapter import ogg_to_wav, stt
+from app.voice.schemas import VoiceCommand, VoiceResponse
 
 COMMAND_PATTERNS = {
     VoiceCommand.create_task: [
@@ -27,9 +27,7 @@ class VoiceUseCases(UseCase):
     def __init__(self, uow: UOWDep) -> None:
         self.uow = uow
 
-    async def create_task(
-        self, user: User, state: FSMContext, args: str
-    ) -> None:
+    async def create_task(self, user: User, state: FSMContext, args: str) -> None:
         user_data = await state.get_data()
         parts = args.split("добавь описание")
         name = parts[0].strip() if parts else ""
@@ -45,9 +43,7 @@ class VoiceUseCases(UseCase):
         await self.uow.commit()
         await state.update_data(task_id=str(task.id))
 
-    async def help(
-        self, user: User, state: FSMContext, ogg_path: str
-    ) -> VoiceResponse:
+    async def help(self, user: User, state: FSMContext, ogg_path: str) -> VoiceResponse:
         wav_path = ogg_path.replace(".ogg", ".wav")
         try:
             wav_path = ogg_to_wav(ogg_path, wav_path)

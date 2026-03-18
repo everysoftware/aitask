@@ -1,12 +1,15 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import TypeVar, Generic, Sequence
+from typing import TYPE_CHECKING, Generic, TypeVar
 
-from pydantic import computed_field, Field
+from pydantic import Field, computed_field
 
 from app.base.models import Entity
 from app.base.schemas import BaseModel
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 class Pagination(BaseModel):
@@ -39,7 +42,7 @@ DTO_T = TypeVar("DTO_T", bound=BaseModel)
 class PageDTO(BaseModel, Generic[DTO_T]):
     items: list[DTO_T]
 
-    @computed_field  # type: ignore
+    @computed_field  # type: ignore[prop-decorator]
     @property
     def total(self) -> int:
         return len(self.items)

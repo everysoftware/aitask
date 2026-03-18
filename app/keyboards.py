@@ -1,4 +1,4 @@
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 CANCEL_KB = InlineKeyboardMarkup(
     inline_keyboard=[

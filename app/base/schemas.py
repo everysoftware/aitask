@@ -1,15 +1,20 @@
 from __future__ import annotations
 
-import datetime
-from typing import Self, Final, overload, Literal
+from typing import TYPE_CHECKING, Final, Literal, Self, overload
 
-from pydantic import BaseModel as PydanticBaseModel, ConfigDict, Field
+from pydantic import BaseModel as PydanticBaseModel
+from pydantic import ConfigDict, Field
 from pydantic_settings import (
     BaseSettings as PydanticBaseSettings,
+)
+from pydantic_settings import (
     SettingsConfigDict,
 )
 
 from app.base.types import UUID, naive_utc, uuid
+
+if TYPE_CHECKING:
+    import datetime
 
 
 class BaseModel(PydanticBaseModel):
@@ -45,9 +50,7 @@ class ErrorResponse(BaseModel):
 
 
 OK: Final = ErrorResponse(msg="ok", type="ok")
-INTERNAL_ERR: Final = ErrorResponse(
-    msg="Internal Server Error", type="unexpected_error"
-)
+INTERNAL_ERR: Final = ErrorResponse(msg="Internal Server Error", type="unexpected_error")
 
 
 # Settings

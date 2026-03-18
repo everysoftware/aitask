@@ -1,4 +1,4 @@
-from enum import auto, StrEnum
+from enum import StrEnum, auto
 
 from pydantic import ConfigDict
 

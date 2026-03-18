@@ -9,9 +9,7 @@ from app.users.service import AuthUseCases
 UserServiceDep = Annotated[AuthUseCases, Depends(AuthUseCases)]
 
 
-async def get_current_user(
-    event_from_user: types.User, users: UserServiceDep
-) -> User:
+async def get_current_user(event_from_user: types.User, users: UserServiceDep) -> User:
     return await users.get_one_by_telegram_id(event_from_user.id)
 
 

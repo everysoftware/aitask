@@ -1,6 +1,6 @@
 import re
 from collections import deque
-from typing import Sequence
+from collections.abc import Sequence
 
 from chatgpt_md_converter import telegram_format
 
@@ -19,47 +19,45 @@ def split_msg(msg: str, *, with_photo: bool = False) -> Sequence[str]:
         # (photo is sent only with the first message).
         if parts:
             max_msg_length = 4096
+        elif with_photo:
+            max_msg_length = 1024
         else:
-            if with_photo:
-                max_msg_length = 1024
-            else:
-                max_msg_length = 4096
+            max_msg_length = 4096
 
         if len(msg) <= max_msg_length:
             # The message length fits within the maximum allowed.
             parts.append(msg)
             break
-        else:
-            # Cutting a part of the message with the maximum length from msg
-            # and finding a position for a break by a newline character.
-            part = msg[:max_msg_length]
-            first_ln = part.rfind("\n")
+        # Cutting a part of the message with the maximum length from msg
+        # and finding a position for a break by a newline character.
+        part = msg[:max_msg_length]
+        first_ln = part.rfind("\n")
 
-            if first_ln != -1:
-                # Found a newline character. Splitting the message by it, excluding the character itself.
-                new_part = part[:first_ln]
+        if first_ln != -1:
+            # Found a newline character. Splitting the message by it, excluding the character itself.
+            new_part = part[:first_ln]
+            parts.append(new_part)
+            # Trimming msg to the length of the new part
+            # and removing the newline character.
+            msg = msg[first_ln + 1 :]
+        else:
+            # No newline character found in the message part.
+            # Try to find at least a space for a break.
+            first_space = part.rfind(" ")
+
+            if first_space != -1:
+                # Found a space. Splitting the message by it, excluding the space itself.
+                new_part = part[:first_space]
                 parts.append(new_part)
                 # Trimming msg to the length of the new part
-                # and removing the newline character.
-                msg = msg[first_ln + 1 :]
+                # and removing the space.
+                msg = msg[first_space + 1 :]
             else:
-                # No newline character found in the message part.
-                # Try to find at least a space for a break.
-                first_space = part.rfind(" ")
-
-                if first_space != -1:
-                    # Found a space. Splitting the message by it, excluding the space itself.
-                    new_part = part[:first_space]
-                    parts.append(new_part)
-                    # Trimming msg to the length of the new part
-                    # and removing the space.
-                    msg = msg[first_space + 1 :]
-                else:
-                    # No suitable place for a break found in the message part.
-                    # Simply add the current part and trim the message
-                    # to its length.
-                    parts.append(part)
-                    msg = msg[max_msg_length:]
+                # No suitable place for a break found in the message part.
+                # Simply add the current part and trim the message
+                # to its length.
+                parts.append(part)
+                msg = msg[max_msg_length:]
     return parts
 
 
@@ -74,9 +72,7 @@ def split_msg_html(text: str, *, with_photo: bool = False) -> Sequence[str]:
     return result_parts
 
 
-def close_tags(
-    html: str, open_tags: Sequence[str] = ()
-) -> tuple[str, Sequence[str]]:
+def close_tags(html: str, open_tags: Sequence[str] = ()) -> tuple[str, Sequence[str]]:
     """Close all opening tags. Add missing opening tags."""
     # Pattern for finding tags considering attributes
     tag_pattern = re.compile(r"<(/?)(\w+)([^>]*)>")

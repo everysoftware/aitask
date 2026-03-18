@@ -1,11 +1,12 @@
-from aiogram import Router, types, F
+from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from app.base.pagination import LimitOffset
-from app.base.types import UUID as ID, UUID
+from app.base.types import UUID
+from app.base.types import UUID as ID
 from app.lists.dependencies import TodoListServiceDep
-from app.lists.keyboards import get_todo_list_kb, get_tasks_kb
+from app.lists.keyboards import get_tasks_kb, get_todo_list_kb
 from app.lists.states import TodoListGroup
 from app.tasks.dependencies import TaskServiceDep
 from app.tasks.states import TaskGroup
@@ -25,16 +26,12 @@ async def get_many(
     user: UserDep,
     todo_lists: TodoListServiceDep,
 ) -> None:
-    message = (
-        event.message if isinstance(event, types.CallbackQuery) else event
-    )
+    message = event.message if isinstance(event, types.CallbackQuery) else event
     user_data = await state.get_data()
     workspace_id = user_data["workspace_id"]
     assert workspace_id is not None
 
-    response = await todo_lists.get_many(
-        user, workspace_id, LimitOffset(limit=100)
-    )
+    response = await todo_lists.get_many(user, workspace_id, LimitOffset(limit=100))
     kb = get_todo_list_kb(response)
     if response.total > 0:
         await message.answer(
@@ -55,9 +52,7 @@ async def get_many(
 @router.message(F.text == "Задачи ✅")
 @router.message(Command("tasks"))
 @router.callback_query(F.data == "to_todo_list")
-@router.callback_query(
-    F.data.startswith("show_todo_list:"), TodoListGroup.get_many
-)
+@router.callback_query(F.data.startswith("show_todo_list:"), TodoListGroup.get_many)
 async def get(
     event: types.CallbackQuery | types.Message,
     state: FSMContext,
@@ -111,9 +106,7 @@ async def select_todo_list(
 ) -> None:
     page = await workspaces.get_many(user, LimitOffset(limit=100))
     kb = get_workspace_kb(page, action_btns=False)
-    await call.message.answer(
-        "Выберите пространство для списка задач", reply_markup=kb
-    )
+    await call.message.answer("Выберите пространство для списка задач", reply_markup=kb)
     await state.set_state(TodoListGroup.select_list)
     await call.answer()
 
@@ -130,18 +123,14 @@ async def enter_name(call: types.CallbackQuery, state: FSMContext) -> None:
 @router.message(TodoListGroup.enter_name)
 async def enter_description(message: types.Message, state: FSMContext) -> None:
     await state.update_data(todo_list_name=message.text)
-    await message.answer(
-        "Введите описание. Например, `Фильмы, которые я хочу посмотреть`"
-    )
+    await message.answer("Введите описание. Например, `Фильмы, которые я хочу посмотреть`")
     await state.set_state(TodoListGroup.enter_description)
 
 
 @router.message(TodoListGroup.enter_description)
 async def enter_stack(message: types.Message, state: FSMContext) -> None:
     await state.update_data(todo_list_description=message.text)
-    await message.answer(
-        "Введите теги. Они будут использованы для ИИ-анализа задач. "
-    )
+    await message.answer("Введите теги. Они будут использованы для ИИ-анализа задач. ")
     await state.set_state(TodoListGroup.enter_stack)
 
 

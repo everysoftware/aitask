@@ -12,10 +12,11 @@ from app.commands import BOT_COMMANDS
 from app.di import setup_di
 from app.routing import main_router
 from app.stats.config import stats_settings
+
 from .bot import bot as tg_bot
 
 
-async def on_startup(bot: Bot, dispatcher: Dispatcher) -> None:
+async def on_startup(bot: Bot) -> None:
     await ping_redis()
     await bot.set_my_commands(BOT_COMMANDS)
     os.makedirs(stats_settings.stats_dir, exist_ok=True)

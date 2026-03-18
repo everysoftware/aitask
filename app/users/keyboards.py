@@ -1,6 +1,6 @@
 from aiogram.types import (
-    ReplyKeyboardMarkup,
     KeyboardButton,
+    ReplyKeyboardMarkup,
 )
 
 MAIN_MENU_KB = ReplyKeyboardMarkup(

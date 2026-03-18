@@ -2,7 +2,7 @@ import datetime
 from dataclasses import dataclass
 from typing import Any
 
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 
 from app.base.specification import ISpecification
 from app.base.types import UUID
@@ -35,18 +35,12 @@ class TaskRepository(SQLAlchemyRepository[Task]):
                 func.date(self.model_type.updated_at),
             )
             .where(
-                self.model_type.user_id
-                == user_id,  # Фильтруем по ID пользователя
-                self.model_type.status
-                == TaskStatus.done,  # Фильтруем по состоянию задачи
+                self.model_type.user_id == user_id,  # Фильтруем по ID пользователя
+                self.model_type.status == TaskStatus.done,  # Фильтруем по состоянию задачи
                 (from_dt >= self.model_type.updated_at)
-                & (
-                    self.model_type.updated_at >= to_dt
-                ),  # Фильтруем задачи, обновленные за период
+                & (self.model_type.updated_at >= to_dt),  # Фильтруем задачи, обновленные за период
             )
-            .group_by(
-                func.date(self.model_type.updated_at)
-            )  # Группируем по дню обновления
+            .group_by(func.date(self.model_type.updated_at))  # Группируем по дню обновления
         )
         result = await self.session.execute(stmt)
         return {date: count for count, date in result.all()}
@@ -64,4 +58,4 @@ class TaskRepository(SQLAlchemyRepository[Task]):
             .group_by(self.model_type.test_status)
         )
         result = await self.session.execute(stmt)
-        return {status: count for status, count in result.all()}
+        return dict(result.all())  # type: ignore[arg-type]

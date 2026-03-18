@@ -2,7 +2,8 @@ import datetime
 from enum import Enum
 from typing import Any, Self
 
-from sqlalchemy import BigInteger, Enum as SAEnum, MetaData, Uuid, inspect
+from sqlalchemy import BigInteger, MetaData, Uuid, inspect
+from sqlalchemy import Enum as SAEnum
 from sqlalchemy.orm import (
     DeclarativeBase,
     Mapped,
@@ -46,9 +47,7 @@ class UUIDMixin(Mixin):
 
 
 class AuditMixin(Mixin):
-    created_at: Mapped[datetime.datetime] = mapped_column(
-        default=naive_utc, sort_order=100
-    )
+    created_at: Mapped[datetime.datetime] = mapped_column(default=naive_utc, sort_order=100)
     updated_at: Mapped[datetime.datetime] = mapped_column(
         default=naive_utc,
         onupdate=naive_utc,
@@ -64,10 +63,7 @@ class Entity(BaseOrm, UUIDMixin, AuditMixin):
         return cls(**model.model_dump())
 
     def dump(self) -> dict[str, Any]:
-        return {
-            c.key: getattr(self, c.key)
-            for c in inspect(self).mapper.column_attrs  # noqa
-        }
+        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
     def merge_model(self, model: BaseModel) -> Self:
         for key, value in model.model_dump(exclude_unset=True).items():

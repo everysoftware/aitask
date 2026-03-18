@@ -1,4 +1,4 @@
-from aiogram import Router, F, types
+from aiogram import F, Router, types
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
@@ -7,7 +7,7 @@ from app.base.types import UUID
 from app.keyboards import CANCEL_KB
 from app.users.dependencies import UserDep
 from app.workspaces.dependencies import WorkspaceServiceDep
-from app.workspaces.keyboards import get_workspace_kb, SHOW_WORKSPACE_KB
+from app.workspaces.keyboards import SHOW_WORKSPACE_KB, get_workspace_kb
 from app.workspaces.states import WorkspaceGroup
 
 router = Router()
@@ -22,9 +22,7 @@ async def get_many(
     user: UserDep,
     todo_lists: WorkspaceServiceDep,
 ) -> None:
-    message = (
-        event.message if isinstance(event, types.CallbackQuery) else event
-    )
+    message = event.message if isinstance(event, types.CallbackQuery) else event
     response = await todo_lists.get_many(user, LimitOffset(limit=100))
     kb = get_workspace_kb(response)
     if response.total > 0:
@@ -54,9 +52,7 @@ async def request_name(call: types.CallbackQuery, state: FSMContext) -> None:
 
 
 @router.message(WorkspaceGroup.enter_name)
-async def request_description(
-    message: types.Message, state: FSMContext
-) -> None:
+async def request_description(message: types.Message, state: FSMContext) -> None:
     await state.update_data(ws_name=message.text)
     await message.answer(
         "Введите описание пространства. Например, `Пространство для работы над VK`",

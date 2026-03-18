@@ -1,5 +1,6 @@
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Literal, cast, Sequence, Self
+from typing import Literal, Self, cast
 
 from app.base.models import Entity
 from app.base.schemas import BaseModel
@@ -19,11 +20,14 @@ class SortingEntry:
             case 2:
                 field, order = values
             case _:
-                raise ValueError(f"Invalid format: {value}")
+                msg = f"Invalid format: {value}"
+                raise ValueError(msg)
         if order not in ["asc", "desc"]:
-            raise ValueError(f"Invalid sorting order: {order}")
+            msg = f"Invalid sorting order: {order}"
+            raise ValueError(msg)
         if not hasattr(model_type, field):
-            raise ValueError(f"Invalid sorting field: {field}")
+            msg = f"Invalid sorting field: {field}"
+            raise ValueError(msg)
         return cls(field, cast(Literal["asc", "desc"], order))
 
 

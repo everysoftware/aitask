@@ -1,18 +1,20 @@
-from typing import Callable, Dict, Any, Awaitable
+from collections.abc import Awaitable, Callable
+from typing import TYPE_CHECKING, Any
 
 from aiogram import BaseMiddleware, Dispatcher
-from aiogram.types import TelegramObject, Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message, TelegramObject
 from fast_depends import inject as fast_inject
 
-from aiogram.dispatcher.event.handler import HandlerObject
+if TYPE_CHECKING:
+    from aiogram.dispatcher.event.handler import HandlerObject
 
 
 class DIMiddleware(BaseMiddleware):
     async def __call__(
         self,
-        handler: Callable[[TelegramObject, Dict[str, Any]], Awaitable[Any]],
+        handler: Callable[[TelegramObject, dict[str, Any]], Awaitable[Any]],  # noqa: ARG002
         event: TelegramObject,
-        data: Dict[str, Any],
+        data: dict[str, Any],
     ) -> Any:
         handler_obj: HandlerObject = data["handler"]
 

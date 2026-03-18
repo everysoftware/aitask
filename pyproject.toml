@@ -1,12 +1,38 @@
 [tool.ruff]
-fix = true
+line-length = 120
 indent-width = 4
-line-length = 79
 target-version = "py312"
+output-format = "concise"
 
-[tool.ruff.format]
-docstring-code-format = true
+[tool.ruff.lint]
+select = [
+    "ALL"
+]
+ignore = [
+    "D", # docstrings
+    "DOC", # docstrings
+    "ANN", # annotations
+    "PTH",  # pathlib
+    "RUF001", # string contains ambigous
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+    "W191", # indentation contains tabs
+    "RUF012", # mutable class attributes should be annotated with `typing.ClassVar`
+    "S101", # use of assert detected
+    "TRY003", # avoid specifying long messages outside the exception class
+    "PLR6301", # method could be a function, class method, or static method
 
+    # Handled by formatter later
+    "ISC001", # single line implicit string concatenation
+    "COM812", # missing trailing comma
+    "E501", # line too long
+]
+
+[tool.ruff.lint.per-file-ignores]
+"migrations/*" = ["INP001"]  # Implicit namespace packages are not allowed
+"tests/*" = ["ARG001"]  # Unused function argument
+"tests/mocked_bot.py" = ["ALL"]
+"scripts/*" = ["ALL"]
 
 [tool.mypy]
 strict = true
@@ -19,4 +45,5 @@ module = "*.*"
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 asyncio_mode = "auto"
