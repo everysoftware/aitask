@@ -2,7 +2,7 @@ from aiogram import Router, types, F
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.context import FSMContext
 
-from app.commands import BOT_COMMANDS_STR
+from app.commands import BOT_COMMANDS_STR, HELP_STR
 from app.users.dependencies import UserServiceDep
 from app.users.keyboards import MAIN_MENU_KB
 from app.users.schemas import UserCreate
@@ -29,7 +29,12 @@ async def start_command(
     )
 
 
+@router.message(Command("commands"))
+async def get_commands(message: types.Message) -> None:
+    await message.answer("**Команды**:\n\n" + BOT_COMMANDS_STR)
+
+
 @router.message(Command("help"))
 @router.message(F.text == "Помощь 🧭")
 async def get_help(message: types.Message) -> None:
-    await message.answer("**Навигация по боту**:\n\n" + BOT_COMMANDS_STR)
+    await message.answer(HELP_STR)
