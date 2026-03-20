@@ -1,10 +1,9 @@
-APP_PATH = app
-TESTS_PATH = tests
+APP_PATH = aitask
 
 .PHONY: run
 run:
 	docker compose up db redis -d --build
-	python -m app
+	python -m $(APP_PATH)
 
 .PHONY: up
 up:
