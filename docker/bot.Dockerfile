@@ -35,4 +35,4 @@ RUN chmod 755 .
 
 COPY ./migrations ./migrations
 COPY ./alembic.ini ./alembic.ini
-COPY ./app ./app
+COPY ./wilde ./wilde

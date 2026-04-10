@@ -1,4 +1,4 @@
-APP_PATH = aitask
+APP_PATH = wilde
 
 .PHONY: run
 run:
@@ -7,10 +7,6 @@ run:
 
 .PHONY: up
 up:
-	docker compose up -d --build
-
-.PHONY: up-prod
-up-prod:
 	docker compose up -d --build
 
 .PHONY: generate
@@ -34,4 +30,4 @@ lint:
 
 .PHONY: freeze
 freeze:
-	pip freeze > requirements-full.txt
+	uv export --format requirements-txt > requirements.txt

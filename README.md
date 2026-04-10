@@ -1,4 +1,4 @@
-# Lira
+# Wilde
 
 **Intelligent task tracker with AI and voice control**
 

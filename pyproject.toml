@@ -1,3 +1,26 @@
+[project]
+name = "wilde"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "aiogram==3.26.0",
+    "alembic==1.13.3",
+    "asyncpg==0.29.0",
+    "chatgpt-md-converter==0.1.2",
+    "fast-depends==3.0.8",
+    "matplotlib==3.9.2",
+    "mypy==1.11.2",
+    "numpy==2.0.2",
+    "pandas==2.2.3",
+    "pre-commit==4.0.1",
+    "pydantic-settings==2.5.2",
+    "redis==5.1.1",
+    "ruff==0.6.9",
+    "speechrecognition==3.12.0",
+    "sqlalchemy==2.0.35",
+    "vosk==0.3.45",
+]
+
 [tool.ruff]
 line-length = 120
 indent-width = 4
