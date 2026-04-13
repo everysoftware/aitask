@@ -32,12 +32,12 @@ services:
     build:
       context: .
       dockerfile: docker/bot.Dockerfile
-    command: /bin/bash -c "alembic upgrade head && python -m wilde"
+    command: /bin/bash -c "uv run alembic upgrade head && uv run -m aitask"
     env_file:
       - .env
     restart: unless-stopped
     volumes:
-      - "./wilde:/opt/wilde/wilde"
+      - "./aitask:/opt/aitask/aitask"
     depends_on:
       - db
       - redis

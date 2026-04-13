@@ -1,4 +1,4 @@
-APP_PATH = wilde
+APP_PATH = aitask
 
 .PHONY: run
 run:

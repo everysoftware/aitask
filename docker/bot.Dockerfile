@@ -12,8 +12,6 @@ ENV PIP_DEFAULT_TIMEOUT=100
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-ENV DOCKER_MODE 1
-
 WORKDIR /opt/app
 
 RUN apt update && apt install -y \
@@ -27,12 +25,13 @@ RUN mkdir -p /opt/app/models && \
     rm /opt/app/models/$VOSK_MODEL.zip
 
 #RUN /bin/bash -c "pip install torch==2.5.1 -f https://download.pytorch.org/whl/torch_stable.html"
+RUN pip install uv
 
-COPY requirements.txt requirements.txt
-RUN /bin/bash -c "pip install -r requirements.txt"
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-dev --no-install-project
 
 RUN chmod 755 .
 
 COPY ./migrations ./migrations
 COPY ./alembic.ini ./alembic.ini
-COPY ./wilde ./wilde
+COPY ./aitask ./aitask

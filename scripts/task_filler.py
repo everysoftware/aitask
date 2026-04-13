@@ -10,12 +10,12 @@ import pandas as pd
 from sqlalchemy import insert
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
-from wilde.base.types import UUID, naive_utc
-from wilde.lists.models import TodoList
-from wilde.tasks.models import Task
-from wilde.tasks.schemas import TaskStatus, TestStatus
-from wilde.users.models import User
-from wilde.workspaces.models import Workspace
+from aitask.base.types import UUID, naive_utc
+from aitask.lists.models import TodoList
+from aitask.tasks.models import Task
+from aitask.tasks.schemas import TaskStatus, TestStatus
+from aitask.users.models import User
+from aitask.workspaces.models import Workspace
 
 
 def generate_timestamps(number: int) -> Sequence[datetime.datetime]:
